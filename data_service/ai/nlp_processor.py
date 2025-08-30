@@ -78,11 +78,18 @@ class NLPProcessor:
             if self.use_transformers:
                 try:
                     from transformers import pipeline
+                    import torch
+                    
+                    # 强制使用 CPU 设备
+                    device = torch.device("cpu")
+                    self.logger.info(f"Device force set to use CPU")
+                    
                     self.sentiment_pipeline = pipeline(
                         "sentiment-analysis",
-                        model="cardiffnlp/twitter-roberta-base-sentiment"
+                        model="cardiffnlp/twitter-roberta-base-sentiment",
+                        device=device  # 指定使用 CPU
                     )
-                    self.logger.info("Transformers sentiment pipeline loaded")
+                    self.logger.info("Transformers sentiment pipeline loaded on CPU")
                 except ImportError:
                     self.logger.warning("Transformers not available")
                     self.sentiment_pipeline = None

@@ -1,5 +1,4 @@
-from .dashboard_app import TradingDashboard
-from .charts import ChartGenerator
-from .widgets import DashboardWidgets
+from data_service.dashboard.charts import ChartGenerator
+from data_service.dashboard.widgets import DashboardWidgets
 
-__all__ = ['TradingDashboard', 'ChartGenerator', 'DashboardWidgets'] 
+__all__ = ['ChartGenerator', 'DashboardWidgets'] 

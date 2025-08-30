@@ -9,4 +9,9 @@ try:
 except ImportError:
     AlphaVantageFetcher = None
 
-__all__ = ['BinanceFetcher', 'AlphaVantageFetcher'] 
+try:
+    from .coingecko_fetcher import CoinGeckoFetcher
+except ImportError:
+    CoinGeckoFetcher = None
+
+__all__ = ['BinanceFetcher', 'AlphaVantageFetcher', 'CoinGeckoFetcher'] 

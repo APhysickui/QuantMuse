@@ -16,6 +16,14 @@ class ChartGenerator:
     def create_equity_curve(self, equity_data: pd.DataFrame, 
                            benchmark_data: Optional[pd.DataFrame] = None) -> go.Figure:
         """Create equity curve chart"""
+        # 使用绝对导入路径
+        try:
+            from data_service.dashboard.widgets import DashboardWidgets
+            self.widgets = DashboardWidgets()
+        except ImportError as e:
+            self.logger.warning(f"无法导入DashboardWidgets: {e}")
+            self.widgets = None
+        """Create equity curve chart"""
         fig = go.Figure()
         
         # Add strategy equity curve

@@ -1,3 +1,5 @@
+LICENSE
+README.md
 setup.py
 data_service/__init__.py
 data_service/config.py
@@ -32,9 +34,16 @@ data_service/factors/stock_selector.py
 data_service/fetchers/__init__.py
 data_service/fetchers/alpha_vantage_fetcher.py
 data_service/fetchers/binance_fetcher.py
+data_service/fetchers/coingecko_fetcher.py
 data_service/fetchers/yahoo_fetcher.py
+data_service/ml/__init__.py
+data_service/ml/feature_engineering.py
+data_service/ml/ml_models.py
 data_service/processors/__init__.py
 data_service/processors/data_processor.py
+data_service/realtime/__init__.py
+data_service/realtime/real_time_feed.py
+data_service/realtime/websocket_client.py
 data_service/storage/__init__.py
 data_service/storage/cache_manager.py
 data_service/storage/database_manager.py
@@ -50,6 +59,12 @@ data_service/utils/exceptions.py
 data_service/utils/logger.py
 data_service/vector_db/__init__.py
 data_service/vector_db/vector_store.py
+data_service/visualization/__init__.py
+data_service/visualization/plotly_charts.py
+data_service/web/__init__.py
+data_service/web/api_server.py
+data_service/web/dashboard.py
+data_service/web/strategy_ui.py
 tests/test_binance_fetcher.py
 tests/test_data_processor.py
 tests/test_integration.py

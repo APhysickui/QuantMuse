@@ -1,16 +1,18 @@
 Metadata-Version: 2.4
 Name: data_service
 Version: 0.1
+License-File: LICENSE
 Requires-Dist: pandas
 Requires-Dist: numpy
 Requires-Dist: python-binance>=1.0.0
 Requires-Dist: websocket-client>=1.0.0
+Requires-Dist: websockets>=10.0
+Requires-Dist: aiohttp>=3.8.0
 Requires-Dist: alpha_vantage
 Requires-Dist: fastapi
 Requires-Dist: uvicorn
 Requires-Dist: redis
 Requires-Dist: requests
-Requires-Dist: aiohttp
 Requires-Dist: textblob
 Requires-Dist: openpyxl
 Provides-Extra: test
@@ -32,9 +34,21 @@ Requires-Dist: textblob; extra == "ai"
 Requires-Dist: scikit-learn; extra == "ai"
 Requires-Dist: wordcloud; extra == "ai"
 Provides-Extra: visualization
-Requires-Dist: matplotlib; extra == "visualization"
-Requires-Dist: seaborn; extra == "visualization"
-Requires-Dist: plotly; extra == "visualization"
-Requires-Dist: streamlit; extra == "visualization"
+Requires-Dist: matplotlib>=3.5.0; extra == "visualization"
+Requires-Dist: seaborn>=0.11.0; extra == "visualization"
+Requires-Dist: plotly>=5.0.0; extra == "visualization"
+Requires-Dist: streamlit>=1.20.0; extra == "visualization"
+Requires-Dist: kaleido>=0.2.1; extra == "visualization"
+Provides-Extra: realtime
+Requires-Dist: websockets>=10.0; extra == "realtime"
+Requires-Dist: aiohttp>=3.8.0; extra == "realtime"
+Requires-Dist: asyncio-mqtt>=0.11.0; extra == "realtime"
+Requires-Dist: redis>=4.0.0; extra == "realtime"
+Provides-Extra: web
+Requires-Dist: fastapi; extra == "web"
+Requires-Dist: uvicorn[standard]; extra == "web"
+Requires-Dist: jinja2; extra == "web"
+Requires-Dist: aiofiles; extra == "web"
+Dynamic: license-file
 Dynamic: provides-extra
 Dynamic: requires-dist

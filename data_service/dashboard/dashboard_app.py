@@ -19,10 +19,12 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 try:
     from data_service.backtest import BacktestEngine, PerformanceAnalyzer
-    from data_service.dashboard import ChartGenerator, DashboardWidgets
     from data_service.factors import FactorCalculator, FactorBacktest
     from data_service.strategies import StrategyRegistry
     from data_service.ai import NLPProcessor, SentimentFactorCalculator
+    # 使用绝对导入路径
+    from data_service.dashboard.charts import ChartGenerator
+    from data_service.dashboard.widgets import DashboardWidgets
 except ImportError as e:
     st.error(f"Failed to import required modules: {e}")
     st.info("Please install required dependencies: pip install -e .[ai,visualization]")
@@ -522,9 +524,10 @@ class TradingDashboard:
         volatility = np.std(returns) * np.sqrt(252)
         sharpe_ratio = annualized_return / volatility if volatility > 0 else 0
         
-        # Calculate drawdown
-        peak = equity.expanding().max()
-        drawdown = (equity - peak) / peak
+        # Convert numpy array to pandas Series for expanding calculations
+        equity_series = pd.Series(equity)
+        peak = equity_series.expanding().max()
+        drawdown = (equity_series - peak) / peak
         
         return {
             'equity_data': equity_data,
