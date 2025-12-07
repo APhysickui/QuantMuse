@@ -1,3 +1,3 @@
-from .data_processor import DataProcessor, ProcessedData
+from .data_processor import DataProcessor, MarketAnalysis
 
-__all__ = ['DataProcessor', 'ProcessedData'] 
+__all__ = ['DataProcessor', 'MarketAnalysis']

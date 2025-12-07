@@ -14,4 +14,14 @@ try:
 except ImportError:
     CoinGeckoFetcher = None
 
-__all__ = ['BinanceFetcher', 'AlphaVantageFetcher', 'CoinGeckoFetcher'] 
+try:
+    from .yahoo_fetcher import YahooFetcher
+except ImportError:
+    YahooFetcher = None
+
+__all__ = [
+    'BinanceFetcher',
+    'AlphaVantageFetcher',
+    'CoinGeckoFetcher',
+    'YahooFetcher',
+]

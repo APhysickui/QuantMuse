@@ -1,41 +1,30 @@
 import unittest
 from unittest.mock import Mock, patch
 import pandas as pd
-from datetime import datetime
-import requests
+
 from data_service.fetchers.binance_fetcher import BinanceFetcher
-from binance.exceptions import BinanceAPIException
+from data_service.utils.exceptions import DataFetchError
+
 
 class TestBinanceFetcher(unittest.TestCase):
     """Test cases for BinanceFetcher"""
 
     def setUp(self):
         """Set up test fixtures"""
-        # Create patchers
-        self.client_patcher = patch('binance.client.Client')
-        self.requests_patcher = patch('binance.client.requests.get')
-        
-        # Start patchers
-        self.mock_client_class = self.client_patcher.start()
-        self.mock_requests = self.requests_patcher.start()
-        
-        # Create a mock response
-        mock_response = Mock(spec=requests.Response)
-        mock_response.status_code = 200
-        mock_response.text = '{"msg": "success"}'
-        self.mock_requests.return_value = mock_response
-        
-        # Configure the mock client instance
+        # Patch the Spot client used inside BinanceFetcher so no real API calls are made
+        self.spot_patcher = patch('data_service.fetchers.binance_fetcher.Spot')
+        self.mock_spot_class = self.spot_patcher.start()
+
+        # Configure the mock client instance returned by Spot(...)
         self.mock_client_instance = Mock()
-        self.mock_client_class.return_value = self.mock_client_instance
-        
+        self.mock_spot_class.return_value = self.mock_client_instance
+
         # Create fetcher with mocked client
-        self.fetcher = BinanceFetcher()
+        self.fetcher = BinanceFetcher(use_proxy=False)
 
     def tearDown(self):
         """Clean up after each test"""
-        self.client_patcher.stop()
-        self.requests_patcher.stop()
+        self.spot_patcher.stop()
 
     def test_initialization(self):
         """Test if fetcher initializes correctly"""
@@ -43,7 +32,7 @@ class TestBinanceFetcher(unittest.TestCase):
 
     def test_fetch_historical_data(self):
         """Test historical data fetching"""
-        # Mock data
+        # Mock data returned by Spot.klines
         mock_klines = [
             [
                 1499040000000,  # Timestamp
@@ -60,28 +49,25 @@ class TestBinanceFetcher(unittest.TestCase):
                 "0"            # Ignore
             ]
         ]
-        
+
         # Configure mock
-        self.mock_client_instance.get_klines.return_value = mock_klines
-        
+        self.mock_client_instance.klines.return_value = mock_klines
+
         # Execute test
         df = self.fetcher.fetch_historical_data("BTCUSDT")
-        
+
         # Verify results
         self.assertIsInstance(df, pd.DataFrame)
         self.assertEqual(len(df), 1)
         self.assertEqual(float(df['close'].iloc[0]), 8150.0)
+        self.mock_client_instance.klines.assert_called_once()
 
     def test_invalid_symbol(self):
         """Test handling of invalid symbol"""
-        # Configure mock to raise an exception
-        self.mock_client_instance.get_klines.side_effect = BinanceAPIException(
-            response=Mock(status_code=400, text="Invalid symbol"),
-            status_code=400,
-            text="Invalid symbol"
-        )
-        
-        with self.assertRaises(Exception):
+        # Configure mock to raise an exception from the underlying client
+        self.mock_client_instance.klines.side_effect = Exception("Invalid symbol")
+
+        with self.assertRaises(DataFetchError):
             self.fetcher.fetch_historical_data("")
 
     def test_market_depth(self):
@@ -91,18 +77,19 @@ class TestBinanceFetcher(unittest.TestCase):
             'bids': [['8100.0', '1.0'], ['8099.0', '2.0']],
             'asks': [['8101.0', '1.0'], ['8102.0', '2.0']]
         }
-        
-        # Configure mock
-        self.mock_client_instance.get_order_book.return_value = mock_depth
-        
-        # Execute test
+
+        # Configure mock depth response
+        self.mock_client_instance.depth.return_value = mock_depth
+
+        # Execute test using compatibility wrapper
         depth = self.fetcher.get_market_depth("BTCUSDT")
-        
+
         # Verify results
         self.assertIn('bids', depth)
         self.assertIn('asks', depth)
         self.assertEqual(len(depth['bids']), 2)
         self.assertEqual(len(depth['asks']), 2)
 
+
 if __name__ == '__main__':
-    unittest.main() 
+    unittest.main()
